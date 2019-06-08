@@ -31,12 +31,12 @@ Le scénario est donc le suivant :
 - 1339: Une clé privé [RSA](https://fr.wikipedia.org/wiki/Chiffrement_RSA) de 4096 bits est générée. Pour info une clé de 2048 bits est jugée suffisante par L'[ANSSI](https://fr.wikipedia.org/wiki/Agence_nationale_de_la_s%C3%A9curit%C3%A9_des_syst%C3%A8mes_d%27information) jusqu'en 2030. Peu de chance qu'on casse cette clé directement avec la puissance de calcul d'un simple pc. Heureusement, une partie de cette clé privée nous est accessible (cf. plus bas), ce qui va nous permettre de résoudre cette partie du challenge. Cette clé privée n'est évidement pas dans l'archive.
 - 1340: La clé publique associée est extraite ensuite. Cette clé est dans l'archive : il s'agit du fichier *public.key*.
 - 1341: Heureusement pour nous, une partie de la clé privée est extraite : il s'agit d'un des deux nombre à factoriser. RSA repose sur la difficulté de factoriser un nombre n, qui est le facteur de deux nombres premiers : p et q. n est contenu dans la clé publique. Il nous est donc connu. p est contenu dans le fichier prime.txt.
-- 1342-1347: Une succession de commande sed vient augmenter la difficulté du challenge : certains octets du nombre premier p sont modifiés.
+- 1342-1347: Une succession de commandes sed vient augmenter la difficulté du challenge : certains octets du nombre premier p sont modifiés.
 - 1348: Le fichier *motDePasseGPG.txt* est chiffré avec RSA. Le résultat est stocké dans le fichier *motDePasseGPG.txt.enc*, présent dans l'archive.
 
 Essayons donc de réaliser l'opération inverse et de retrouver le fichier *lsb_RGB.png*.
 
-1. Extraction des entiers de la clé public
+1. Extraction des entiers de la clé publique
 ```bash
 grep -v -- ----- public.key | base64 -d | openssl asn1parse -inform DER -i -strparse 19
     0:d=0  hl=4 l= 522 cons: SEQUENCE          
@@ -52,6 +52,7 @@ Je vous invite à consulter [la page Wikipédia de RSA](https://fr.wikipedia.org
 
 
 2. Reconstitution de l'entier p
+
 On essaye tout d'abord d'effectuer les opérations inverses des sed, soit:
 ```bash
 cp prime.txt prime.bck

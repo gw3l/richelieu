@@ -8,7 +8,7 @@ Il s'agit de stocker de l'information dans les bits de poids le plus faible d'un
 
 Le tout est de savoir dans quelle partie de l'image l'information est stockée.
 
-Pour ça j'ai un [petit script python](./script/detectLSB.py) (qui traînait dur mon disque et dont je ne suis pas l'auteur, mais j'ai oublié où je l'ai trouvé... Si vous le savez, vous pouvez m'en faire part, j'indiquerais alors l'auteur)
+Pour ça j'ai un [petit script python](./scripts/detectLSB.py) (qui traînait dur mon disque et dont je ne suis pas l'auteur, mais j'ai oublié où je l'ai trouvé... Si vous le savez, vous pouvez m'en faire part, j'indiquerais alors l'auteur)
 
 (Vous devez installer le package pillow de pip pour qu'il fonctionne (`pip install Pillow --user`)
 ```bash

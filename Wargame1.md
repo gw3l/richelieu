@@ -2,7 +2,7 @@
 
 Nous y voilà : le wargame. il s'agit de réaliser une élévation de privilège ou du moins à la simuler en passant d'un utilisateur A à un utilisateur B, via un binaire ayant des droits [suid](https://fr.wikipedia.org/wiki/Setuid#Setuid_et_Setgid_pour_les_ex%C3%A9cutables)
 
-Le programme précédemment "cracké" nous as donné la possibilité de nous connecter sur un serveur ssh. Il y a juste dessus un  [binaire](./binaries/defi1.bin) et un fichier texte :
+Le programme précédemment "cracké" nous as donné la possibilité de nous connecter sur un serveur ssh sur lequel on trouve un [binaire](./binaries/defi1.bin) et un fichier texte :
 
 ```bash
 defi1@AttrapeLeDrapeau:~$ ls -l
@@ -11,7 +11,7 @@ total 16
 -r-sr-sr-x 1 defi1-drapeau defi1-drapeau 8752 May 10 10:50 prog.bin
 ```
 
-Notez les "s" à la place des classiques "x" sur la ligne correspondant au binaire *prog.bin*. Cela indique que le binaire est en *suid*: toute l’exécution de ce programme sera faite en tant qu'utilisateur *defi1-drapeau*. Notez aussi que le fichier drapeau n'est lisible que par l'utilisateur *defi1-drapeau* et que l'on est connecté en tant qu'utilisateur *defi1*
+Notez les "s" à la place des classiques "x" sur la ligne correspondant au binaire *prog.bin*. Cela indique que le binaire est en *suid*: toute l’exécution de ce programme sera faite en tant qu'utilisateur effectif *defi1-drapeau*. Notez aussi que le fichier drapeau n'est lisible que par l'utilisateur *defi1-drapeau* et que l'on est connecté en tant qu'utilisateur *defi1*
 
 Lançons le programme :
 ```bash

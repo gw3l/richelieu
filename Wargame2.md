@@ -62,13 +62,13 @@ mov rbp,rsp;
 ret;
 ```
 Formidable ! Pour les autres gadgets, j'ai utilisé :
-0x40086b : `pop rbp; ret`
-0x400863: `mov    eax,DWORD PTR [rbp-0x14]; add rsp, 0x38; pop rbx; pop rbp; ret;`
+- 0x40086b : `pop rbp; ret`
+- 0x400863 : `mov    eax,DWORD PTR [rbp-0x14]; add rsp, 0x38; pop rbx; pop rbp; ret;`
 
 J'ai codé [un script python](./scripts/defi2-exploit.py) qui exploite la faille.
 - Il va d'abord leaker l’adresse de *puts* contenue dans la [GOT](https://en.wikipedia.org/wiki/Global_Offset_Table) : `puts(0x602018)`
 - Ensuite il va retourner dans le programme  au moment du *fgets* en modifiant son premier argument : `fgets(0x602000, 0x3e8, stdin)`. Le script enverra alors `"/bin/sh"+"\x00"*24+p64(system)+"\n"`.  Cela va réécrire une partie de la GOT jusqu'à l'adresse de *strlen*.
-- Le programme va continuer à s’exécuter et appeler strlen(buff). Or buff contient "/bin/sh" et l'adresse de strlen dans la GOT a été écrasée par celle de system. On obtient donc un shell.
+- Le programme va continuer à s’exécuter et appeler `strlen()` sur la chaîne que l'on vient de passer à fgets(), elle est située à l'adresse 0x602000. Or cette adresse contient "/bin/sh" et l'adresse de `strlen()` dans la GOT a été écrasée par celle de `system()`. On obtient donc un shell.
 
 Cette partie aurait aussi bien pu être réalisée en effectuant un [ret2csu](https://www.rootnetsec.com/ropemporium-ret2csu/) ou peut-être même encore un [ret2resolve](https://gist.github.com/ricardo2197/8c7f6f5b8950ed6771c1cd3a116f7e62) pour contourner l'absence apparente de gadget `pop rdi`. Un simple ret2reg aurait pu aussir faire l'affaire, [comme l'a fait Alkeryn](https://github.com/Alkeryn/ctf_richelieu_dgse/blob/master/defi2/exploit.py)
 

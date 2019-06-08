@@ -104,7 +104,7 @@ exit_group(0)                           = ?
 
 Peut-on hooker les appels systèmes ? La réponse est oui. C'est un peu plus complexe qu'avec LD_PRELOAD mais ça se fait. Il "suffit" de **créer un module kernel Linux qui modifie la syscall table du noyau**.
 
-C'est ce que j'ai fait [ici](./scripts/kernel_hook/). Ce module fonctionne sur Ubuntu 18.04 (et probablement ailleurs). Il est prévu pour **hooker le syscall** readlink. J'ai laissé la possibilité de hooker write à titre d'exemple, mais en l'état ça fait planter le kernel. Il est conçu pour attendre 8 secondes lors du second appel au syscall readlink par ce crackme exclusivement (pour le pas bloquer le reste du système), ce qui nous laisse une fenêtre de temps suffisante pour attacher le programme dans gdb. Toutes les instructions précédent ce deuxième syscall auront été effectuées sans débogage. On croise les doigts pour qu'il n'y ait pas d'autres fonction antidebugging jusqu'à la vérification du mot de passe.
+C'est ce que j'ai fait [ici](./scripts/kernel_hook/). Ce module fonctionne sur Ubuntu 18.04 (et probablement ailleurs). Il est prévu pour **hooker le syscall** `readlink`. J'ai laissé la possibilité de hooker `write` à titre d'exemple, mais en l'état ça fait planter le kernel. Il est conçu pour attendre 8 secondes lors du second appel au syscall `readlink` par ce crackme exclusivement (pour le pas bloquer le reste du système), ce qui nous laisse une fenêtre de temps suffisante pour attacher le programme dans gdb. Toutes les instructions précédant ce deuxième syscall auront été effectuées sans débogage. On croise les doigts pour qu'il n'y ait pas d'autres fonctions antidebugging jusqu'à la vérification du mot de passe.
 
 Compilons et lançons le module :
 ```bash
@@ -123,7 +123,7 @@ root      4777  4774  0 13:14 pts/2    00:00:00 bash -c ps -ef | grep executable
 root      4779  4777  0 13:14 pts/2    00:00:00 grep executable
 gdb-peda$ attach 4776
 ```
-On continue l’exécution au pas à pas jusqu’à arriver à l'instruction située à l'adresse 0x400b20 qui semble être le véritable point d'entrée une fois le programme dépacké. On voit que le programme vérifie le nombre de paramètres, puis effectue les instructions suivantes :
+On continue l’exécution au pas à pas jusqu’à arriver à l'instruction située à l'adresse 0x400b20 qui semble être le véritable point d'entrée une fois le programme dépacké. On voit que le programme vérifie le nombre de paramètres, puis exécute les instructions suivantes :
 
 ```
 => 0x400abd:	repnz scas al,BYTE PTR es:[rdi]
@@ -133,7 +133,7 @@ On continue l’exécution au pas à pas jusqu’à arriver à l'instruction sit
 ```
 À cet endroit, la longueur du premier paramètre est vérifié. Elle doit être égale à 30, sinon le programme envoie "Mauvais mot de passe".
 
-Dans gdb on fait : `set $rcx = 0xffffffffffffffe0` avant l'instruction à l’adresse 0x400ac4 ci dessous. On fait comme si la chaîne avait la bonne longueur, plutôt que de recommencer tout le programme.
+Dans gdb on fait : `set $rcx = 0xffffffffffffffe0` avant l'instruction à l’adresse 0x400ac4 ci dessus. On fait comme si la chaîne avait la bonne longueur, plutôt que de recommencer tout le programme.
 
 On arrive au bout d'un moment à ces instructions :
 
@@ -153,7 +153,7 @@ On arrive au bout d'un moment à ces instructions :
  0x400b11:	sete   r8b
  0x400b15:	jmp    0x400af0
 ```
-*rdx* contient un pointeur vers une chaîne qui vaut 773063265d3a0e3b0d4d2a1f2e1f2d4f2851377a147620780f214d216c11 (en hexadécimal). appelons cette chaîne *clé*.
+*rdx* contient un pointeur vers une chaîne qui vaut 773063265d3a0e3b0d4d2a1f2e1f2d4f2851377a147620780f214d216c11 (en hexadécimal). Appelons cette chaîne *clé*.
 *rdi* pointe vers la chaîne de caractère qu'on a passé en paramètre.
 On voit que l'opération suivante est réalisée, pour chaque lettre de la chaîne passée en paramètre (en pseudo-code pour simplifier) :
 ```
