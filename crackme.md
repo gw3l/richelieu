@@ -73,7 +73,7 @@ En déboguant le binaire avec gdb on se rend compte qu'il y a plusieurs protecti
 - le binaire est compilé en **statique**, c'est à dire qu'il ne fait aucun appel à une librairie extérieure, toutes les fonctions nécessaires sont inclues dans le binaire.
 - diverses fonctions **anti reverse engineering** comme l'utilisation de **[rtdsc](https://fr.wikipedia.org/wiki/RDTSC)** (qui compte le temps écoulé entre un certain nombre d'instructions). Il vérifie si la variable d'environnement **MALLOC_TRACE** est renseignée, signe que les allocations mémoire sont tracées. Je le soupçonne aussi de faire appel à la fonction **ptrace** pour vérifier que le programme n'est pas en cours de débogage.
 
-Si le binaire aurait été compilé dynamiquement on aurait pu [hooker](https://www.0x0ff.info/2014/hook-lib-linux-ld_preload/) une fonction juste avant la fin du programme avec **LD_PRELOAD**, mais là on ne peut pas... Par contre il fait appel à des appels système (forcement):
+Si le binaire avait été compilé dynamiquement on aurait pu [hooker](https://www.0x0ff.info/2014/hook-lib-linux-ld_preload/) une fonction juste avant la fin du programme avec **LD_PRELOAD**, mais là on ne peut pas... Par contre il fait appel à des appels système (forcement):
 
 ```bash
 strace ./crackme password
